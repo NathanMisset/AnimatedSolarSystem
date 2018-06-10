@@ -181,7 +181,7 @@ namespace Opdracht6_Transformations
             moonMatrix = Matrix.CreateTranslation(-earth.Transform.Translation) * Matrix.CreateRotationY(rMoon) ;
             moonMatrix = moonMatrix * Matrix.CreateTranslation(earth.Transform.Translation) ;
             moonMatrix = moonMatrix * Matrix.CreateRotationY(rEarth);
-            moonMatrix = moonMatrix * Matrix.CreateFromAxisAngle(new Vector3(0, 0, 0), 45); 
+            //moonMatrix = moonMatrix * Matrix.CreateFromAxisAngle(new Vector3(0, 0, 0), 45); 
             moon.Transform.Translation = Vector3.Transform(moon.Transform.Translation, moonMatrix);
             
 
