@@ -24,6 +24,24 @@ namespace Opdracht6_Transformations
         List<Sphere> spheres;
 
         Sphere sun;
+        Sphere earth;
+        Sphere mars;
+        Sphere jupiter;
+        Sphere saturnus;
+        Sphere uranus;
+        Sphere moon;
+
+        float rEarth;
+        float rMars;
+        float rJupiter;
+        float rSaturnus;
+        float rUranus;
+        float rMoon;
+
+        Matrix moonMatrix;
+
+        float cameraMoveR;
+        float cameraMoveL;
 
         public SimPhyGameWorld()
             : base()
@@ -51,12 +69,46 @@ namespace Opdracht6_Transformations
             // Step 1: Study the way the Sphere class is used in Initialize()
             // Step 2: Scale the sun uniformly (= the same factor in x, y and z directions) by a factor 2
             spheres.Add(sun = new Sphere(Matrix.Identity, Color.Yellow, 30));
+            sun.Transform.M11 = 2;
+            sun.Transform.M22 = 2;
+            sun.Transform.M33 = 2;
+
             // Step 3: Create an earth Sphere, with radius, distance and color as given in the assignment
+            spheres.Add(earth = new Sphere(Matrix.Identity, Color.Navy, 30));
+            earth.Transform.Translation = new Vector3(16,0,0);
 
             // Step 4: Create 4 other planets: mars, jupiter, saturnus, uranus (radius, distance and color as given)
-            // Step 5: Randomize the orbital rotation (in the Y plane) relative to the sun for each planet
-            
+            spheres.Add(mars = new Sphere(Matrix.Identity, Color.Red, 30));
+            mars.Transform.Translation = new Vector3(21,0,0);
+            mars.Transform.M11 = 0.6f;
+            mars.Transform.M22 = 0.6f;
+            mars.Transform.M33 = 0.6f;
+
+            spheres.Add(jupiter = new Sphere(Matrix.Identity, Color.Orange, 30));
+            jupiter.Transform.Translation = new Vector3(27, 0, 0);
+            jupiter.Transform.M11 = 1.7f;
+            jupiter.Transform.M22 = 1.7f;
+            jupiter.Transform.M33 = 1.7f;
+
+            spheres.Add(saturnus = new Sphere(Matrix.Identity, Color.Khaki, 30));
+            saturnus.Transform.Translation = new Vector3(36, 0, 0);
+            saturnus.Transform.M11 = 1.6f;
+            saturnus.Transform.M22 = 1.6f;
+            saturnus.Transform.M33 = 1.6f;
+
+            spheres.Add(uranus = new Sphere(Matrix.Identity, Color.Cyan, 30));
+            uranus.Transform.Translation = new Vector3(43, 0, 0);
+            uranus.Transform.M11 = 1.5f;
+            uranus.Transform.M22 = 1.5f;
+            uranus.Transform.M33 = 1.5f;
+
             // Step 7: Create the moon (radius, distance and color as given)            
+            spheres.Add(moon = new Sphere(Matrix.Identity, Color.LightGray, 30));
+            moon.Transform.Translation = new Vector3(18, 0, 0);
+            moon.Transform.M11 = 0.5f;
+            moon.Transform.M22 = 0.5f;
+            moon.Transform.M33 = 0.5f;
+
 
             base.Initialize();
         }
@@ -95,19 +147,45 @@ namespace Opdracht6_Transformations
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
             {
                 // Step 10: Make the camera position rotate around the origin depending on gameTime.ElapsedGameTime.TotalSeconds
-
+                
+                cameraMoveR = (float)1.5 * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 SetupCamera();
+
+
+                cameraPosition = Vector3.Transform(cameraPosition, Matrix.CreateRotationY(cameraMoveR));
             }
             else if (Keyboard.GetState().IsKeyDown(Keys.Left))
             {
                 // Step 10: Make the camera position rotate around the origin depending on gameTime.ElapsedGameTime.TotalSeconds
 
                 SetupCamera();
+                cameraMoveL = (float)-1.5 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                cameraPosition = Vector3.Transform(cameraPosition, Matrix.CreateRotationY(cameraMoveL));
             }
-            
+
             // Step 6: Make the planets rotate, all with different speeds between 0.15 and 0.5 (radians) per second
+            rEarth = (float)0.15 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            rMars = (float)0.50 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            rJupiter = (float)0.25 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            rSaturnus = (float)0.35 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            rUranus = (float)0.15 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            rMoon = (float)1.5 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            earth.Transform.Translation = Vector3.Transform(earth.Transform.Translation, Matrix.CreateRotationY(rEarth));
+            mars.Transform.Translation = Vector3.Transform(mars.Transform.Translation, Matrix.CreateRotationY(rMars));
+            jupiter.Transform.Translation = Vector3.Transform(jupiter.Transform.Translation, Matrix.CreateRotationY(rJupiter));
+            saturnus.Transform.Translation = Vector3.Transform(saturnus.Transform.Translation, Matrix.CreateRotationY(rSaturnus));
+            uranus.Transform.Translation = Vector3.Transform(uranus.Transform.Translation, Matrix.CreateRotationY(rUranus));
 
             // Step 7: Make the moon rotate around the earth, speed 1.5
+            moonMatrix = Matrix.CreateTranslation(-earth.Transform.Translation) * Matrix.CreateRotationY(rMoon) ;
+            moonMatrix = moonMatrix * Matrix.CreateTranslation(earth.Transform.Translation) ;
+            moonMatrix = moonMatrix * Matrix.CreateRotationY(rEarth);
+            moonMatrix = moonMatrix * Matrix.CreateFromAxisAngle(new Vector3(0, 0, 0), 45); 
+            moon.Transform.Translation = Vector3.Transform(moon.Transform.Translation, moonMatrix);
+            
+
+            //moonMatrix = moonMatrix * Matrix.CreateFromAxisAngle(new Vector3(0, 0, 0), 45);
             // Step 8: Change the orbit of the moon such that it is rotated 45 degrees toward the sun/origin(see example!)
 
             base.Update(gameTime);
