@@ -30,6 +30,7 @@ namespace Opdracht6_Transformations
         Sphere saturnus;
         Sphere uranus;
         Sphere moon;
+        Sphere pluto;
 
         float rEarth;
         float rMars;
@@ -109,7 +110,6 @@ namespace Opdracht6_Transformations
             moon.Transform.M22 = 0.5f;
             moon.Transform.M33 = 0.5f;
 
-
             base.Initialize();
         }
 
@@ -179,9 +179,10 @@ namespace Opdracht6_Transformations
 
             // Step 7: Make the moon rotate around the earth, speed 1.5
             moonMatrix = Matrix.CreateTranslation(-earth.Transform.Translation) * Matrix.CreateRotationY(rMoon) ;
+            moonMatrix = moonMatrix * Matrix.CreateRotationZ(rMoon);
             moonMatrix = moonMatrix * Matrix.CreateTranslation(earth.Transform.Translation) ;
             moonMatrix = moonMatrix * Matrix.CreateRotationY(rEarth);
-            moonMatrix = moonMatrix * Matrix.CreateFromAxisAngle(new Vector3(0, 0, 0), 45); 
+            //moonMatrix = moonMatrix * Matrix.CreateFromAxisAngle(new Vector3(0, 0, 0), 45); 
             moon.Transform.Translation = Vector3.Transform(moon.Transform.Translation, moonMatrix);
             
 
